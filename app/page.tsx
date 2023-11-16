@@ -1,6 +1,6 @@
 import styles from "./page.module.css";
 import slugify from "slugify";
-
+import Link from "next/link";
 async function getData() {
   const res = await fetch("https://dummyjson.com/posts/?limit=10");
 
@@ -42,7 +42,10 @@ export default async function Home() {
       {posts.map((post: PostsType) => {
         return (
           <div key={post.userId} className={styles.card}>
-            <h2> {post.title} </h2>
+            <Link href="/">
+              {" "}
+              <h2> {post.title} </h2>{" "}
+            </Link>
             <p>{post.body}</p>
           </div>
         );
