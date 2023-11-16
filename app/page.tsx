@@ -1,11 +1,13 @@
 import styles from "./page.module.css";
-import slugify from "slugify";
 import Link from "next/link";
+import { getSlugify } from "@/app/utility/getSlugify"
+import { URL } from "@/app/utility/getURL"
+
 async function getData() {
-  const res = await fetch("https://dummyjson.com/posts/?limit=10");
+
+  const res = await fetch(`${URL}api/posts`);
 
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }
 
@@ -22,6 +24,7 @@ interface PostsType {
 }
 
 export default async function Home() {
+
   let isTitle = "How to slugify the title or sting in JavaScript?";
 
   const { posts } = await getData();
@@ -40,9 +43,13 @@ export default async function Home() {
       <h1 className={styles.h1}> Using NPM package </h1>
 
       {posts.map((post: PostsType) => {
+
+        let slug = "/post/" + getSlugify(post.title)
+
         return (
-          <div key={post.userId} className={styles.card}>
-            <Link href="/">
+          <div key={post.id} className={styles.card}>
+
+            <Link href={slug}>
               {" "}
               <h2> {post.title} </h2>{" "}
             </Link>
