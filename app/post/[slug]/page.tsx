@@ -1,20 +1,22 @@
 import Link from "next/link";
 import styles from "./post.module.css";
-
+import { URL } from "@/app/utility/getURL";
 interface PostsType {
   id: number;
   title: string;
   body: string;
   userId: number;
+  date:string;
   tags: string[];
   reactions: number;
 }
 
 import { getSlugify } from "@/app/utility/getSlugify"
+import dayjs from "dayjs";
 
 async function getData(slug: string) {
 
-  const res = await fetch(`http://localhost:3000/api/post/${slug}`);
+  const res = await fetch(`${URL}api/post/${slug}`);
 
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
@@ -28,10 +30,15 @@ export default async function Post({ params }: { params: { slug: string } }) {
 
   let { post } = await getData(params.slug)
 
+  let getDate = dayjs(post.date).format("MMM DD, YYYY"); // https://day.js.org/docs/en/parse/string-format
+
   return (
     <section className={styles.main}>
       <Link href={"/"}> Back</Link>
       <div className={styles.card}>
+        <time className="text-sm" dateTime={post.date} title={getDate}>
+          {getDate}
+        </time>
         <h2 className="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">{post.title}</h2>
         <p className="mb-4 font-medium">{post.body}</p>
       </div>
@@ -42,15 +49,17 @@ export default async function Post({ params }: { params: { slug: string } }) {
 
 export async function generateStaticParams() {
 
-  const res = await fetch("http://localhost:3000/api/posts");
+  const res = await fetch(`${URL}api/posts`);
 
   let getPosts: { posts: PostsType[] } = await res.json();
 
   const { posts } = getPosts
 
-  return posts.map((post: PostsType) => ({
-    slug: getSlugify(post.title),
-  }))
+  return posts.map((post: PostsType) =>{
+    return  {
+      slug: getSlugify(post.title),
+    }
+  })
 
 }
 
