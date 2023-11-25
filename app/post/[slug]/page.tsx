@@ -1,18 +1,18 @@
 import Link from "next/link";
 import styles from "./post.module.css";
 import { URL } from "@/app/utility/getURL";
+import { getSlugify } from "@/app/utility/getSlugify"
+import dayjs from "dayjs";
+
 interface PostsType {
   id: number;
   title: string;
   body: string;
   userId: number;
-  date:string;
+  date: Date;
   tags: string[];
   reactions: number;
-}
-
-import { getSlugify } from "@/app/utility/getSlugify"
-import dayjs from "dayjs";
+};
 
 async function getData(slug: string) {
 
@@ -36,7 +36,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
     <section className={styles.main}>
       <Link href={"/"}> Back</Link>
       <div className={styles.card}>
-        <time className="text-sm" dateTime={post.date} title={getDate}>
+        <time className="text-sm my-3" dateTime={post.date} title={getDate}>
           {getDate}
         </time>
         <h2 className="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">{post.title}</h2>
@@ -55,8 +55,8 @@ export async function generateStaticParams() {
 
   const { posts } = getPosts
 
-  return posts.map((post: PostsType) =>{
-    return  {
+  return posts.map((post: PostsType) => {
+    return {
       slug: getSlugify(post.title),
     }
   })
